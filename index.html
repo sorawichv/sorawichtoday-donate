@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สนับสนุน SorawichToday</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- PromptPay QR Code Generator Helper (promptpay-qr spec generator in JS) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        noto: ['Noto Sans Thai Looped', 'sans-serif'],
+                    },
+                    colors: {
+                        promptpay: {
+                            navy: '#003B6A',
+                            blue: '#005691',
+                        },
+                        btc: {
+                            orange: '#F7931A',
+                            dark: '#4A2A00',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans Thai Looped', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .amount-btn-selected {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-color: #818cf8;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            color: #ffffff;
+        }
+        .method-tab-active {
+            border-bottom: 3px solid #818cf8;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .animate-pulse-subtle {
+            animation: pulseSlow 3s infinite;
+        }
+        @keyframes pulseSlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between p-4 md:p-8">
+
+    <header class="max-w-xl w-full mx-auto text-center mt-4 mb-6">
+        <div class="inline-flex items-center justify-center p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 mb-3 shadow-inner">
+            <i class="fa-solid fa-heart text-2xl text-rose-500 animate-bounce"></i>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
+            สนับสนุน SorawichToday
+        </h1>
+        <p class="text-slate-400 text-sm md:text-base mt-2">
+            ร่วมเป็นส่วนหนึ่งในการขับเคลื่อนและสนับสนุนการสร้างสรรค์ผลงานคุณภาพ
+        </p>
+    </header>
+
+    <main class="max-w-xl w-full mx-auto glass-panel rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        
+        <!-- Decoration Glows -->
+        <div class="absolute -top-20 -left-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <section class="mb-6">
+            <label class="block text-slate-300 text-sm font-medium mb-3 flex items-center justify-between">
+                <span><i class="fa-solid fa-coins text-amber-400 mr-2"></i>เลือกจำนวนเงินที่ต้องการสนับสนุน</span>
+                <span class="text-xs text-slate-400">(บาท)</span>
+            </label>
+            
+            <!-- Quick Amount Buttons -->
+            <div class="grid grid-cols-5 gap-2 mb-4">
+                <button type="button" onclick="selectAmount(1)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    1 ฿
+                </button>
+                <button type="button" onclick="selectAmount(5)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    5 ฿
+                </button>
+                <button type="button" onclick="selectAmount(10)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    10 ฿
+                </button>
+                <button type="button" onclick="selectAmount(20)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    20 ฿
+                </button>
+                <button type="button" onclick="selectAmount(50)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    50 ฿
+                </button>
+            </div>
+
+            <!-- Custom Amount Input -->
+            <div class="relative">
+                <input type="number" id="customAmount" min="1" step="any" placeholder="หรือระบุจำนวนเงินเอง" 
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-4 py-3.5 pl-11 pr-12 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-lg font-medium"
+                    oninput="onCustomAmountInput()" />
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    <i class="fa-solid fa-baht-sign"></i>
+                </div>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
+                    THB
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <label class="block text-slate-300 text-sm font-medium mb-3">
+                <i class="fa-solid fa-wallet text-indigo-400 mr-2"></i>เลือกช่องทางการชำระเงิน
+            </label>
+            <div class="grid grid-cols-2 gap-2 p-1.5 bg-slate-900/80 rounded-2xl border border-slate-800">
+                <button type="button" id="tab-promptpay" onclick="switchMethod('promptpay')" 
+                    class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-medium text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-qrcode text-blue-400 text-lg"></i>
+                    <span>พร้อมเพย์</span>
+                </button>
+                <button type="button" id="tab-lightning" onclick="switchMethod('lightning')" 
+                    class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-medium text-slate-300 hover:text-white">
+                    <i class="fa-solid fa-bolt text-amber-400 text-lg"></i>
+                    <span>Bitcoin Lightning</span>
+                </button>
+            </div>
+        </section>
+
+        <button type="button" onclick="generatePaymentQR()" 
+            class="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 mb-6">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>สร้าง QR Code ชำระเงิน</span>
+        </button>
+
+        <div id="qr-result-box" class="hidden transition-all duration-300 border-t border-slate-800 pt-6">
+            <div class="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 text-center relative flex flex-col items-center">
+                
+                <!-- PromptPay Info Header -->
+                <div id="pp-info" class="hidden mb-4 w-full">
+                    <div class="inline-flex items-center gap-2 bg-promptpay-navy/80 px-4 py-1.5 rounded-full border border-blue-400/30 text-xs text-blue-200 mb-2">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span>พร้อมเพย์</span>
+                    </div>
+                    <p class="text-xs text-slate-400">หมายเลขพร้อมเพย์: <span class="font-mono text-slate-200 font-semibold">004999094599775</span></p>
+                </div>
+
+                <!-- Lightning Info Header -->
+                <div id="ln-info" class="hidden mb-4 w-full">
+                    <div class="inline-flex items-center gap-2 bg-amber-950/60 px-4 py-1.5 rounded-full border border-amber-500/30 text-xs text-amber-200 mb-2">
+                        <i class="fa-solid fa-bolt text-amber-400"></i>
+                        <span>Bitcoin Lightning Network</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Lightning Address: <span class="font-mono text-amber-300 font-semibold">hawkishrabbi333@walletofsatoshi.com</span></p>
+                </div>
+
+                <!-- Loading State Spinner for Invoice Generation -->
+                <div id="ln-loading" class="hidden my-4 py-6 text-center w-full">
+                    <i class="fa-solid fa-spinner fa-spin text-amber-400 text-3xl mb-2"></i>
+                    <p class="text-xs text-slate-300">กำลังติดต่อ Lightning Server เพื่อสร้าง Invoice (ล็อกจำนวน Sats)...</p>
+                </div>
+
+                <!-- QR Display Element -->
+                <div id="qr-container" class="relative inline-flex justify-center items-center bg-white p-4 rounded-2xl shadow-xl my-2 border-4 border-slate-700 mx-auto">
+                    <div id="qrcode-canvas" class="flex justify-center items-center min-w-[200px] min-h-[200px]"></div>
+                </div>
+
+                <!-- Amount Badge -->
+                <div class="mt-3 mb-4 w-full">
+                    <span class="text-slate-400 text-xs">ยอดเงินที่ต้องชำระ</span>
+                    <div class="text-2xl font-bold text-emerald-400 mt-0.5" id="display-amount">0.00 ฿</div>
+                    <div id="sats-amount" class="text-xs text-amber-400/90 hidden font-mono mt-0.5">~0 Sats</div>
+                </div>
+
+                <!-- Raw Text / Payload Box -->
+                <div class="mt-4 bg-slate-950/80 rounded-xl p-3 border border-slate-800 text-left w-full">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                        <span id="payload-label">ข้อมูล QR Code</span>
+                        <button type="button" onclick="copyPayload()" class="text-indigo-400 hover:text-indigo-300 text-xs flex items-center gap-1 font-medium">
+                            <i class="fa-regular fa-copy"></i>
+                            <span id="copy-btn-text">คัดลอก</span>
+                        </button>
+                    </div>
+                    <div id="payload-text" class="text-xs font-mono text-slate-300 break-all bg-slate-900 p-2 rounded border border-slate-800 max-h-20 overflow-y-auto w-full">
+                        -
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Custom Notification Modal/Toast -->
+        <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 border border-slate-700 text-slate-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+            <span id="toast-msg" class="text-sm font-medium">ข้อความแจ้งเตือน</span>
+        </div>
+
+    </main>
+
+    <footer class="max-w-xl w-full mx-auto text-center mt-8 text-xs text-slate-500">
+        <p>© SorawichToday — ขอขอบคุณทุกๆ การสนับสนุน</p>
+    </footer>
+
+    <script>
+        // State Management
+        let selectedAmount = 20; // Default amount
+        let currentMethod = 'promptpay'; // 'promptpay' or 'lightning'
+        let qrcodeInstance = null;
+        let currentPayload = '';
+
+        const PROMPTPAY_ID = '004999094599775'; // 15-digit e-wallet PromptPay
+        const LIGHTNING_ADDRESS = 'hawkishrabbi333@walletofsatoshi.com';
+
+        // Initialize on Load
+        window.onload = function() {
+            selectAmount(20);
+            switchMethod('promptpay');
+        };
+
+        // Select Amount Handler
+        function selectAmount(amount) {
+            selectedAmount = amount;
+            document.getElementById('customAmount').value = '';
+
+            // Update UI buttons styling
+            const buttons = document.querySelectorAll('.amount-btn');
+            buttons.forEach(btn => {
+                const btnVal = parseInt(btn.innerText);
+                if (btnVal === amount) {
+                    btn.classList.add('amount-btn-selected');
+                } else {
+                    btn.classList.remove('amount-btn-selected');
+                }
+            });
+        }
+
+        // Custom Amount Input Handler
+        function onCustomAmountInput() {
+            const val = parseFloat(document.getElementById('customAmount').value);
+            const buttons = document.querySelectorAll('.amount-btn');
+            buttons.forEach(btn => btn.classList.remove('amount-btn-selected'));
+
+            if (!isNaN(val) && val > 0) {
+                selectedAmount = val;
+            } else {
+                selectedAmount = 0;
+            }
+        }
+
+        // Switch Method Tabs
+        function switchMethod(method) {
+            currentMethod = method;
+            const ppTab = document.getElementById('tab-promptpay');
+            const lnTab = document.getElementById('tab-lightning');
+
+            if (method === 'promptpay') {
+                ppTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-semibold bg-blue-600/30 text-blue-300 border border-blue-500/40 shadow-sm";
+                lnTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-medium text-slate-400 hover:text-white";
+            } else {
+                lnTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm";
+                ppTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-medium text-slate-400 hover:text-white";
+            }
+        }
+
+        // Generate Payment QR Code
+        async function generatePaymentQR() {
+            const amount = selectedAmount;
+
+            if (!amount || amount <= 0) {
+                showToast('กรุณาระบุจำนวนเงินให้ถูกต้อง', 'error');
+                return;
+            }
+
+            const qrContainer = document.getElementById('qrcode-canvas');
+            qrContainer.innerHTML = ''; // Clear previous QR
+
+            const resultBox = document.getElementById('qr-result-box');
+            const ppInfo = document.getElementById('pp-info');
+            const lnInfo = document.getElementById('ln-info');
+            const lnLoading = document.getElementById('ln-loading');
+            const qrWrapper = document.getElementById('qr-container');
+            const displayAmount = document.getElementById('display-amount');
+            const satsAmount = document.getElementById('sats-amount');
+            const payloadText = document.getElementById('payload-text');
+            const payloadLabel = document.getElementById('payload-label');
+
+            resultBox.classList.remove('hidden');
+
+            if (currentMethod === 'promptpay') {
+                lnLoading.classList.add('hidden');
+                qrWrapper.classList.remove('hidden');
+                ppInfo.classList.remove('hidden');
+                lnInfo.classList.add('hidden');
+                satsAmount.classList.add('hidden');
+                payloadLabel.innerText = "PromptPay Payload (EMVCo):";
+
+                displayAmount.innerText = `${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿`;
+                
+                // Build PromptPay EMVCo Payload
+                currentPayload = generatePromptPayPayload(PROMPTPAY_ID, amount);
+                payloadText.innerText = currentPayload;
+
+                renderQRCode(qrContainer, currentPayload);
+                showToast('สร้าง QR Code สำเร็จแล้ว', 'success');
+
+            } else { // Lightning Network
+                ppInfo.classList.add('hidden');
+                lnInfo.classList.remove('hidden');
+                satsAmount.classList.remove('hidden');
+                payloadLabel.innerText = "BOLT11 Lightning Invoice (Locked Amount):";
+
+                displayAmount.innerText = `${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿`;
+
+                // Calculate Sats based on dynamic/fallback BTC price
+                let btcPriceThb = 2300000; // default estimated BTC price in THB
+                try {
+                    const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=thb');
+                    if (btcRes.ok) {
+                        const btcData = await btcRes.json();
+                        if (btcData?.bitcoin?.thb) {
+                            btcPriceThb = btcData.bitcoin.thb;
+                        }
+                    }
+                } catch (e) {
+                    console.log('Using default BTC price estimation');
+                }
+
+                const sats = Math.max(1, Math.round((amount / btcPriceThb) * 100000000));
+                const millisats = sats * 1000;
+                satsAmount.innerText = `จำนวน: ${sats.toLocaleString()} Sats`;
+
+                // Show loader while requesting Lightning invoice from LNURL endpoint
+                qrWrapper.classList.add('hidden');
+                lnLoading.classList.remove('hidden');
+
+                try {
+                    // Step 1: Fetch LNURL-pay parameters from Wallet of Satoshi Lightning Address
+                    const [user, domain] = LIGHTNING_ADDRESS.split('@');
+                    const targetLnurl = `https://${domain}/.well-known/lnurlp/${user}`;
+
+                    let lnurlData = null;
+                    try {
+                        const res1 = await fetch(targetLnurl);
+                        if (res1.ok) lnurlData = await res1.json();
+                    } catch (e) {
+                        // Fallback through public CORS proxies if direct fetch blocked by browser CORS policy
+                        const proxies = [
+                            `https://corsproxy.io/?${encodeURIComponent(targetLnurl)}`,
+                            `https://api.allorigins.win/raw?url=${encodeURIComponent(targetLnurl)}`
+                        ];
+                        for (const proxy of proxies) {
+                            try {
+                                const resProxy = await fetch(proxy);
+                                if (resProxy.ok) {
+                                    lnurlData = await resProxy.json();
+                                    break;
+                                }
+                            } catch (pxErr) {
+                                console.log('Proxy fetch failed:', proxy);
+                            }
+                        }
+                    }
+
+                    if (lnurlData && lnurlData.callback) {
+                        // Step 2: Request specific amount invoice in millisatoshis from WoS LNURL callback
+                        const callbackUrl = new URL(lnurlData.callback);
+                        callbackUrl.searchParams.append('amount', millisats);
+
+                        let payData = null;
+                        try {
+                            const res2 = await fetch(callbackUrl.toString());
+                            if (res2.ok) payData = await res2.json();
+                        } catch (e) {
+                            const proxyCb = `https://corsproxy.io/?${encodeURIComponent(callbackUrl.toString())}`;
+                            const res2Proxy = await fetch(proxyCb);
+                            if (res2Proxy.ok) payData = await res2Proxy.json();
+                        }
+
+                        if (payData && payData.pr) {
+                            // Valid BOLT11 Lightning Invoice received (lnbc...)
+                            currentPayload = payData.pr;
+                        } else {
+                            throw new Error('No PR string in WoS response');
+                        }
+                    } else {
+                        throw new Error('Invalid WoS LNURL endpoint response');
+                    }
+                } catch (err) {
+                    console.warn('WoS Invoice generation error, falling back to lightning link:', err);
+                    currentPayload = `lightning:${LIGHTNING_ADDRESS}`;
+                } finally {
+                    lnLoading.classList.add('hidden');
+                    qrWrapper.classList.remove('hidden');
+                }
+
+                payloadText.innerText = currentPayload;
+                
+                // Format BOLT11 as uppercase for standard wallet readability and high-density QR scanning
+                const qrText = (currentPayload.toLowerCase().startsWith('lnbc')) 
+                    ? currentPayload.toUpperCase() 
+                    : currentPayload;
+                    
+                renderQRCode(qrContainer, qrText);
+                showToast(`ล็อกจำนวนเงิน ${sats.toLocaleString()} Sats สำเร็จแล้ว`, 'success');
+            }
+
+            // Smooth scroll to result
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Helper to render QR code using QRCode.js
+        function renderQRCode(container, text) {
+            container.innerHTML = '';
+            qrcodeInstance = new QRCode(container, {
+                text: text,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        // EMVCo PromptPay Generator Specification Implementation
+        function generatePromptPayPayload(target, amount) {
+            // Target formatting (e-Wallet is 15 digits)
+            let formattedTarget = target.replace(/[^0-9]/g, '');
+            
+            // Format 00 (Payload Format Indicator) = '01'
+            // Format 01 (Point of Initiation Method) = '12' (Dynamic if amount specified, else '11')
+            const pfi = '000201';
+            const poi = amount ? '010212' : '010211';
+
+            // Merchant Account Information - PromptPay (Tag 29)
+            // AID: A000000677010111
+            // e-Wallet: 0315 + target(15 digits)
+            let targetTag = '';
+            if (formattedTarget.length === 15) {
+                targetTag = '0315' + formattedTarget;
+            } else if (formattedTarget.length === 13) {
+                // Citizen ID
+                targetTag = '0213' + formattedTarget;
+            } else if (formattedTarget.length === 10) {
+                // Mobile Number
+                targetTag = '01130066' + formattedTarget.substring(1);
+            } else {
+                targetTag = '0315' + formattedTarget.padStart(15, '0');
+            }
+
+            const merchantTag = '0016A000000677010111' + targetTag;
+            const merchantInfo = '29' + String(merchantTag.length).padStart(2, '0') + merchantTag;
+
+            // Transaction Currency: 764 (THB)
+            const currency = '5303764';
+
+            // Transaction Amount (Tag 54)
+            let amountStr = '';
+            if (amount) {
+                const formattedAmount = amount.toFixed(2);
+                amountStr = '54' + String(formattedAmount.length).padStart(2, '0') + formattedAmount;
+            }
+
+            // Country Code: TH (Tag 58)
+            const country = '5802TH';
+
+            // Assemble raw string prior to CRC
+            const rawString = pfi + poi + merchantInfo + currency + amountStr + country + '6304';
+
+            // Compute CRC16 (CCITT-FALSE)
+            const crc = computeCRC16(rawString);
+
+            return rawString + crc;
+        }
+
+        // CRC16 CCITT-FALSE Implementation for PromptPay
+        function computeCRC16(data) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < data.length; i++) {
+                let x = ((crc >> 8) ^ data.charCodeAt(i)) & 0xFF;
+                x ^= x >> 4;
+                crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xFFFF;
+            }
+            return crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Copy Payload Function
+        function copyPayload() {
+            if (!currentPayload) return;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = currentPayload;
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const copyBtnText = document.getElementById('copy-btn-text');
+                copyBtnText.innerText = 'คัดลอกแล้ว!';
+                setTimeout(() => { copyBtnText.innerText = 'คัดลอก'; }, 2000);
+                showToast('คัดลอกข้อมูลเรียบร้อยแล้ว', 'success');
+            } catch (err) {
+                showToast('ไม่สามารถคัดลอกได้', 'error');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Toast Notification Helper
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = msg;
+            if (type === 'success') {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-exclamation text-rose-400";
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
