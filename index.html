@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- QRCode.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- PromptPay QR Code Generator Helper (promptpay-qr spec generator in JS) -->
     <script>
         tailwind.config = {
             theme: {
@@ -51,17 +50,11 @@
             box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
             color: #ffffff;
         }
-        .method-tab-active {
-            border-bottom: 3px solid #818cf8;
+        .sats-btn-selected {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-color: #fbbf24;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
             color: #ffffff;
-            font-weight: 600;
-        }
-        .animate-pulse-subtle {
-            animation: pulseSlow 3s infinite;
-        }
-        @keyframes pulseSlow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
         }
     </style>
 </head>
@@ -85,45 +78,7 @@
         <div class="absolute -top-20 -left-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <section class="mb-6">
-            <label class="block text-slate-300 text-sm font-medium mb-3 flex items-center justify-between">
-                <span><i class="fa-solid fa-coins text-amber-400 mr-2"></i>เลือกจำนวนเงินที่ต้องการสนับสนุน</span>
-                <span class="text-xs text-slate-400">(บาท)</span>
-            </label>
-            
-            <!-- Quick Amount Buttons -->
-            <div class="grid grid-cols-5 gap-2 mb-4">
-                <button type="button" onclick="selectAmount(1)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
-                    1 ฿
-                </button>
-                <button type="button" onclick="selectAmount(5)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
-                    5 ฿
-                </button>
-                <button type="button" onclick="selectAmount(10)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
-                    10 ฿
-                </button>
-                <button type="button" onclick="selectAmount(20)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
-                    20 ฿
-                </button>
-                <button type="button" onclick="selectAmount(50)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
-                    50 ฿
-                </button>
-            </div>
-
-            <!-- Custom Amount Input -->
-            <div class="relative">
-                <input type="number" id="customAmount" min="1" step="any" placeholder="หรือระบุจำนวนเงินเอง" 
-                    class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-4 py-3.5 pl-11 pr-12 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-lg font-medium"
-                    oninput="onCustomAmountInput()" />
-                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                    <i class="fa-solid fa-baht-sign"></i>
-                </div>
-                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
-                    THB
-                </div>
-            </div>
-        </section>
-
+        <!-- Payment Method Tabs -->
         <section class="mb-6">
             <label class="block text-slate-300 text-sm font-medium mb-3">
                 <i class="fa-solid fa-wallet text-indigo-400 mr-2"></i>เลือกช่องทางการชำระเงิน
@@ -140,6 +95,120 @@
                     <span>Bitcoin Lightning</span>
                 </button>
             </div>
+        </section>
+
+        <!-- PromptPay Amount Selection -->
+        <section id="promptpay-amount-section" class="mb-6">
+            <label class="block text-slate-300 text-sm font-medium mb-3 flex items-center justify-between">
+                <span><i class="fa-solid fa-coins text-amber-400 mr-2"></i>เลือกจำนวนเงินที่ต้องการสนับสนุน</span>
+                <span class="text-xs text-slate-400">(บาท)</span>
+            </label>
+            
+            <!-- Quick Amount Buttons THB -->
+            <div class="grid grid-cols-5 gap-2 mb-4">
+                <button type="button" onclick="selectAmountTHB(1)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    1 ฿
+                </button>
+                <button type="button" onclick="selectAmountTHB(5)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    5 ฿
+                </button>
+                <button type="button" onclick="selectAmountTHB(10)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    10 ฿
+                </button>
+                <button type="button" onclick="selectAmountTHB(20)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    20 ฿
+                </button>
+                <button type="button" onclick="selectAmountTHB(50)" class="amount-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    50 ฿
+                </button>
+            </div>
+
+            <!-- Custom Amount Input THB -->
+            <div class="relative">
+                <input type="number" id="customAmountTHB" min="1" step="any" placeholder="หรือระบุจำนวนเงินเอง" 
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-4 py-3.5 pl-11 pr-12 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-lg font-medium"
+                    oninput="onCustomAmountTHBInput()" />
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    <i class="fa-solid fa-baht-sign"></i>
+                </div>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
+                    THB
+                </div>
+            </div>
+        </section>
+
+        <!-- Lightning Amount Selection (Sats / THB Toggle) -->
+        <section id="lightning-amount-section" class="mb-6 hidden">
+            <!-- Mode Switcher (Sats vs THB) -->
+            <div class="flex items-center justify-between mb-3">
+                <label id="ln-amount-label" class="text-slate-300 text-sm font-medium">
+                    <i class="fa-solid fa-bolt text-amber-400 mr-2"></i>เลือกจำนวน Satoshis
+                </label>
+                <div class="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button type="button" id="unit-sats-btn" onclick="setLnUnit('sats')" class="px-2.5 py-1 rounded-lg font-semibold bg-amber-500 text-slate-950">
+                        Sats
+                    </button>
+                    <button type="button" id="unit-thb-btn" onclick="setLnUnit('thb')" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white">
+                        บาท (THB)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Amount Buttons Sats -->
+            <div id="sats-quick-buttons" class="grid grid-cols-5 gap-2 mb-4">
+                <button type="button" onclick="selectAmountSats(10)" class="sats-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-amber-500 hover:bg-slate-700/50 text-amber-300 font-semibold text-xs md:text-sm shadow-sm active:scale-95">
+                    10 Sats
+                </button>
+                <button type="button" onclick="selectAmountSats(50)" class="sats-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-amber-500 hover:bg-slate-700/50 text-amber-300 font-semibold text-xs md:text-sm shadow-sm active:scale-95">
+                    50 Sats
+                </button>
+                <button type="button" onclick="selectAmountSats(100)" class="sats-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-amber-500 hover:bg-slate-700/50 text-amber-300 font-semibold text-xs md:text-sm shadow-sm active:scale-95">
+                    100 Sats
+                </button>
+                <button type="button" onclick="selectAmountSats(500)" class="sats-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-amber-500 hover:bg-slate-700/50 text-amber-300 font-semibold text-xs md:text-sm shadow-sm active:scale-95">
+                    500 Sats
+                </button>
+                <button type="button" onclick="selectAmountSats(1000)" class="sats-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-amber-500 hover:bg-slate-700/50 text-amber-300 font-semibold text-xs md:text-sm shadow-sm active:scale-95">
+                    1,000 Sats
+                </button>
+            </div>
+
+            <!-- Quick Amount Buttons THB for Lightning Mode -->
+            <div id="ln-thb-quick-buttons" class="grid grid-cols-5 gap-2 mb-4 hidden">
+                <button type="button" onclick="selectLnAmountTHB(1)" class="ln-thb-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    1 ฿
+                </button>
+                <button type="button" onclick="selectLnAmountTHB(5)" class="ln-thb-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    5 ฿
+                </button>
+                <button type="button" onclick="selectLnAmountTHB(10)" class="ln-thb-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    10 ฿
+                </button>
+                <button type="button" onclick="selectLnAmountTHB(20)" class="ln-thb-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    20 ฿
+                </button>
+                <button type="button" onclick="selectLnAmountTHB(50)" class="ln-thb-btn transition-all duration-200 py-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-indigo-500 hover:bg-slate-700/50 text-slate-200 font-semibold text-sm md:text-base shadow-sm active:scale-95">
+                    50 ฿
+                </button>
+            </div>
+
+            <!-- Custom Input Input Sats / THB -->
+            <div id="sats-input-container" class="relative">
+                <input type="number" id="customAmountSats" min="1" step="any" placeholder="ระบุจำนวน Sats เอง" 
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-4 py-3.5 pl-11 pr-16 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-lg font-medium"
+                    oninput="onCustomAmountLnInput()" />
+                <div id="ln-input-icon" class="absolute left-4 top-1/2 -translate-y-1/2 text-amber-400">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div id="ln-input-unit" class="absolute right-4 top-1/2 -translate-y-1/2 text-amber-400 font-medium text-sm">
+                    SATS
+                </div>
+            </div>
+
+            <!-- Conversion estimation preview -->
+            <p id="conversion-preview" class="text-xs text-slate-400 mt-2 text-right">
+                ~ 0.00 บาท
+            </p>
         </section>
 
         <button type="button" onclick="generatePaymentQR()" 
@@ -169,7 +238,7 @@
                     <p class="text-xs text-slate-400">Lightning Address: <span class="font-mono text-amber-300 font-semibold">hawkishrabbi333@walletofsatoshi.com</span></p>
                 </div>
 
-                <!-- Loading State Spinner for Invoice Generation -->
+                <!-- Loading State Spinner -->
                 <div id="ln-loading" class="hidden my-4 py-6 text-center w-full">
                     <i class="fa-solid fa-spinner fa-spin text-amber-400 text-3xl mb-2"></i>
                     <p class="text-xs text-slate-300">กำลังติดต่อ Lightning Server เพื่อสร้าง Invoice (ล็อกจำนวน Sats)...</p>
@@ -184,7 +253,7 @@
                 <div class="mt-3 mb-4 w-full">
                     <span class="text-slate-400 text-xs">ยอดเงินที่ต้องชำระ</span>
                     <div class="text-2xl font-bold text-emerald-400 mt-0.5" id="display-amount">0.00 ฿</div>
-                    <div id="sats-amount" class="text-xs text-amber-400/90 hidden font-mono mt-0.5">~0 Sats</div>
+                    <div id="sats-amount" class="text-sm font-semibold text-amber-400 mt-0.5 font-mono">~0 Sats</div>
                 </div>
 
                 <!-- Raw Text / Payload Box -->
@@ -218,29 +287,48 @@
 
     <script>
         // State Management
-        let selectedAmount = 20; // Default amount
+        let selectedAmountTHB = 20;
+        let selectedAmountSats = 100;
+        let lnUnitMode = 'sats'; // 'sats' or 'thb'
         let currentMethod = 'promptpay'; // 'promptpay' or 'lightning'
         let qrcodeInstance = null;
         let currentPayload = '';
+        let btcPriceThb = 2300000; // Estimated dynamic fallback BTC/THB
 
-        const PROMPTPAY_ID = '004999094599775'; // 15-digit e-wallet PromptPay
+        const PROMPTPAY_ID = '004999094599775';
         const LIGHTNING_ADDRESS = 'hawkishrabbi333@walletofsatoshi.com';
 
         // Initialize on Load
         window.onload = function() {
-            selectAmount(20);
+            fetchBtcPrice();
+            selectAmountTHB(20);
+            selectAmountSats(100);
             switchMethod('promptpay');
         };
 
-        // Select Amount Handler
-        function selectAmount(amount) {
-            selectedAmount = amount;
-            document.getElementById('customAmount').value = '';
+        async function fetchBtcPrice() {
+            try {
+                const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=thb');
+                if (btcRes.ok) {
+                    const btcData = await btcRes.json();
+                    if (btcData?.bitcoin?.thb) {
+                        btcPriceThb = btcData.bitcoin.thb;
+                        updateConversionPreview();
+                    }
+                }
+            } catch (e) {
+                console.log('Using fallback BTC price');
+            }
+        }
 
-            // Update UI buttons styling
+        // Amount Selection Handlers - THB
+        function selectAmountTHB(amount) {
+            selectedAmountTHB = amount;
+            document.getElementById('customAmountTHB').value = '';
+
             const buttons = document.querySelectorAll('.amount-btn');
             buttons.forEach(btn => {
-                const btnVal = parseInt(btn.innerText);
+                const btnVal = parseFloat(btn.innerText);
                 if (btnVal === amount) {
                     btn.classList.add('amount-btn-selected');
                 } else {
@@ -249,16 +337,133 @@
             });
         }
 
-        // Custom Amount Input Handler
-        function onCustomAmountInput() {
-            const val = parseFloat(document.getElementById('customAmount').value);
+        function selectLnAmountTHB(amount) {
+            selectedAmountTHB = amount;
+            document.getElementById('customAmountSats').value = amount;
+
+            const buttons = document.querySelectorAll('.ln-thb-btn');
+            buttons.forEach(btn => {
+                const btnVal = parseFloat(btn.innerText);
+                if (btnVal === amount) {
+                    btn.classList.add('amount-btn-selected');
+                } else {
+                    btn.classList.remove('amount-btn-selected');
+                }
+            });
+            updateConversionPreview();
+        }
+
+        function onCustomAmountTHBInput() {
+            const val = parseFloat(document.getElementById('customAmountTHB').value);
             const buttons = document.querySelectorAll('.amount-btn');
             buttons.forEach(btn => btn.classList.remove('amount-btn-selected'));
 
             if (!isNaN(val) && val > 0) {
-                selectedAmount = val;
+                selectedAmountTHB = val;
             } else {
-                selectedAmount = 0;
+                selectedAmountTHB = 0;
+            }
+            updateConversionPreview();
+        }
+
+        // Amount Selection Handlers - Sats
+        function selectAmountSats(sats) {
+            selectedAmountSats = sats;
+            document.getElementById('customAmountSats').value = sats;
+
+            const buttons = document.querySelectorAll('.sats-btn');
+            buttons.forEach(btn => {
+                const btnVal = parseInt(btn.innerText.replace(/,/g, ''));
+                if (btnVal === sats) {
+                    btn.classList.add('sats-btn-selected');
+                } else {
+                    btn.classList.remove('sats-btn-selected');
+                }
+            });
+            updateConversionPreview();
+        }
+
+        function onCustomAmountLnInput() {
+            const val = parseFloat(document.getElementById('customAmountSats').value);
+
+            if (lnUnitMode === 'sats') {
+                const buttons = document.querySelectorAll('.sats-btn');
+                buttons.forEach(btn => btn.classList.remove('sats-btn-selected'));
+
+                if (!isNaN(val) && val > 0) {
+                    selectedAmountSats = val;
+                } else {
+                    selectedAmountSats = 0;
+                }
+            } else { // THB Mode in Lightning
+                const buttons = document.querySelectorAll('.ln-thb-btn');
+                buttons.forEach(btn => btn.classList.remove('amount-btn-selected'));
+
+                if (!isNaN(val) && val > 0) {
+                    selectedAmountTHB = val;
+                } else {
+                    selectedAmountTHB = 0;
+                }
+            }
+            updateConversionPreview();
+        }
+
+        // Toggle Lightning unit mode
+        function setLnUnit(unit) {
+            lnUnitMode = unit;
+            const satsBtn = document.getElementById('unit-sats-btn');
+            const thbBtn = document.getElementById('unit-thb-btn');
+            const satsQuickBtns = document.getElementById('sats-quick-buttons');
+            const lnThbQuickBtns = document.getElementById('ln-thb-quick-buttons');
+            const label = document.getElementById('ln-amount-label');
+            const input = document.getElementById('customAmountSats');
+            const icon = document.getElementById('ln-input-icon');
+            const unitTag = document.getElementById('ln-input-unit');
+
+            if (unit === 'sats') {
+                satsBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-amber-500 text-slate-950 shadow-sm";
+                thbBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white";
+                satsQuickBtns.classList.remove('hidden');
+                lnThbQuickBtns.classList.add('hidden');
+                
+                label.innerHTML = `<i class="fa-solid fa-bolt text-amber-400 mr-2"></i>เลือกจำนวน Satoshis`;
+                input.placeholder = "ระบุจำนวน Sats เอง";
+                input.value = selectedAmountSats > 0 ? selectedAmountSats : '';
+                icon.className = "absolute left-4 top-1/2 -translate-y-1/2 text-amber-400";
+                icon.innerHTML = `<i class="fa-solid fa-bolt"></i>`;
+                unitTag.className = "absolute right-4 top-1/2 -translate-y-1/2 text-amber-400 font-medium text-sm";
+                unitTag.innerText = "SATS";
+
+                selectAmountSats(selectedAmountSats || 100);
+            } else {
+                thbBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-indigo-500 text-white shadow-sm";
+                satsBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white";
+                satsQuickBtns.classList.add('hidden');
+                lnThbQuickBtns.classList.remove('hidden');
+
+                label.innerHTML = `<i class="fa-solid fa-baht-sign text-indigo-400 mr-2"></i>เลือกจำนวนเงินบาท (THB)`;
+                input.placeholder = "ระบุจำนวนเงินบาทเอง";
+                input.value = selectedAmountTHB > 0 ? selectedAmountTHB : '';
+                icon.className = "absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400";
+                icon.innerHTML = `<i class="fa-solid fa-baht-sign"></i>`;
+                unitTag.className = "absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400 font-medium text-sm";
+                unitTag.innerText = "THB";
+
+                selectLnAmountTHB(selectedAmountTHB || 20);
+            }
+            updateConversionPreview();
+        }
+
+        function updateConversionPreview() {
+            const preview = document.getElementById('conversion-preview');
+            if (currentMethod !== 'lightning') return;
+
+            if (lnUnitMode === 'sats') {
+                const estThb = (selectedAmountSats / 100000000) * btcPriceThb;
+                preview.innerText = `~ ${estThb.toFixed(2)} บาท`;
+            } else {
+                const estSats = Math.round((selectedAmountTHB / btcPriceThb) * 100000000);
+                preview.innerText = `~ ${estSats.toLocaleString()} Sats`;
             }
         }
 
@@ -267,41 +472,46 @@
             currentMethod = method;
             const ppTab = document.getElementById('tab-promptpay');
             const lnTab = document.getElementById('tab-lightning');
+            const ppSec = document.getElementById('promptpay-amount-section');
+            const lnSec = document.getElementById('lightning-amount-section');
 
             if (method === 'promptpay') {
                 ppTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-semibold bg-blue-600/30 text-blue-300 border border-blue-500/40 shadow-sm";
                 lnTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-medium text-slate-400 hover:text-white";
+                ppSec.classList.remove('hidden');
+                lnSec.classList.add('hidden');
             } else {
                 lnTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm";
                 ppTab.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl transition-all duration-200 text-sm font-medium text-slate-400 hover:text-white";
+                ppSec.classList.add('hidden');
+                lnSec.classList.remove('hidden');
+                updateConversionPreview();
             }
         }
 
         // Generate Payment QR Code
         async function generatePaymentQR() {
-            const amount = selectedAmount;
-
-            if (!amount || amount <= 0) {
-                showToast('กรุณาระบุจำนวนเงินให้ถูกต้อง', 'error');
-                return;
-            }
-
-            const qrContainer = document.getElementById('qrcode-canvas');
-            qrContainer.innerHTML = ''; // Clear previous QR
-
             const resultBox = document.getElementById('qr-result-box');
             const ppInfo = document.getElementById('pp-info');
             const lnInfo = document.getElementById('ln-info');
             const lnLoading = document.getElementById('ln-loading');
             const qrWrapper = document.getElementById('qr-container');
+            const qrContainer = document.getElementById('qrcode-canvas');
             const displayAmount = document.getElementById('display-amount');
             const satsAmount = document.getElementById('sats-amount');
             const payloadText = document.getElementById('payload-text');
             const payloadLabel = document.getElementById('payload-label');
 
+            qrContainer.innerHTML = '';
             resultBox.classList.remove('hidden');
 
             if (currentMethod === 'promptpay') {
+                const amount = selectedAmountTHB;
+                if (!amount || amount <= 0) {
+                    showToast('กรุณาระบุจำนวนเงินให้ถูกต้อง', 'error');
+                    return;
+                }
+
                 lnLoading.classList.add('hidden');
                 qrWrapper.classList.remove('hidden');
                 ppInfo.classList.remove('hidden');
@@ -311,7 +521,6 @@
 
                 displayAmount.innerText = `${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿`;
                 
-                // Build PromptPay EMVCo Payload
                 currentPayload = generatePromptPayPayload(PROMPTPAY_ID, amount);
                 payloadText.innerText = currentPayload;
 
@@ -319,37 +528,37 @@
                 showToast('สร้าง QR Code สำเร็จแล้ว', 'success');
 
             } else { // Lightning Network
+                let sats = 0;
+                let thbEquivalent = 0;
+
+                if (lnUnitMode === 'sats') {
+                    sats = selectedAmountSats;
+                    thbEquivalent = (sats / 100000000) * btcPriceThb;
+                } else {
+                    const amountTHB = selectedAmountTHB;
+                    sats = Math.max(1, Math.round((amountTHB / btcPriceThb) * 100000000));
+                    thbEquivalent = amountTHB;
+                }
+
+                if (!sats || sats <= 0) {
+                    showToast('กรุณาระบุจำนวน Sats ให้ถูกต้อง', 'error');
+                    return;
+                }
+
+                const millisats = sats * 1000;
+
                 ppInfo.classList.add('hidden');
                 lnInfo.classList.remove('hidden');
                 satsAmount.classList.remove('hidden');
-                payloadLabel.innerText = "BOLT11 Lightning Invoice (Locked Amount):";
+                payloadLabel.innerText = "BOLT11 Lightning Invoice (Locked Sats):";
 
-                displayAmount.innerText = `${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿`;
-
-                // Calculate Sats based on dynamic/fallback BTC price
-                let btcPriceThb = 2300000; // default estimated BTC price in THB
-                try {
-                    const btcRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=thb');
-                    if (btcRes.ok) {
-                        const btcData = await btcRes.json();
-                        if (btcData?.bitcoin?.thb) {
-                            btcPriceThb = btcData.bitcoin.thb;
-                        }
-                    }
-                } catch (e) {
-                    console.log('Using default BTC price estimation');
-                }
-
-                const sats = Math.max(1, Math.round((amount / btcPriceThb) * 100000000));
-                const millisats = sats * 1000;
+                displayAmount.innerText = `~ ${thbEquivalent.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿`;
                 satsAmount.innerText = `จำนวน: ${sats.toLocaleString()} Sats`;
 
-                // Show loader while requesting Lightning invoice from LNURL endpoint
                 qrWrapper.classList.add('hidden');
                 lnLoading.classList.remove('hidden');
 
                 try {
-                    // Step 1: Fetch LNURL-pay parameters from Wallet of Satoshi Lightning Address
                     const [user, domain] = LIGHTNING_ADDRESS.split('@');
                     const targetLnurl = `https://${domain}/.well-known/lnurlp/${user}`;
 
@@ -358,7 +567,6 @@
                         const res1 = await fetch(targetLnurl);
                         if (res1.ok) lnurlData = await res1.json();
                     } catch (e) {
-                        // Fallback through public CORS proxies if direct fetch blocked by browser CORS policy
                         const proxies = [
                             `https://corsproxy.io/?${encodeURIComponent(targetLnurl)}`,
                             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetLnurl)}`
@@ -370,14 +578,11 @@
                                     lnurlData = await resProxy.json();
                                     break;
                                 }
-                            } catch (pxErr) {
-                                console.log('Proxy fetch failed:', proxy);
-                            }
+                            } catch (pxErr) {}
                         }
                     }
 
                     if (lnurlData && lnurlData.callback) {
-                        // Step 2: Request specific amount invoice in millisatoshis from WoS LNURL callback
                         const callbackUrl = new URL(lnurlData.callback);
                         callbackUrl.searchParams.append('amount', millisats);
 
@@ -392,16 +597,15 @@
                         }
 
                         if (payData && payData.pr) {
-                            // Valid BOLT11 Lightning Invoice received (lnbc...)
                             currentPayload = payData.pr;
                         } else {
-                            throw new Error('No PR string in WoS response');
+                            throw new Error('No PR string');
                         }
                     } else {
-                        throw new Error('Invalid WoS LNURL endpoint response');
+                        throw new Error('Invalid LNURL endpoint');
                     }
                 } catch (err) {
-                    console.warn('WoS Invoice generation error, falling back to lightning link:', err);
+                    console.warn('WoS Invoice error, using fallback format:', err);
                     currentPayload = `lightning:${LIGHTNING_ADDRESS}`;
                 } finally {
                     lnLoading.classList.add('hidden');
@@ -410,7 +614,6 @@
 
                 payloadText.innerText = currentPayload;
                 
-                // Format BOLT11 as uppercase for standard wallet readability and high-density QR scanning
                 const qrText = (currentPayload.toLowerCase().startsWith('lnbc')) 
                     ? currentPayload.toUpperCase() 
                     : currentPayload;
@@ -419,11 +622,9 @@
                 showToast(`ล็อกจำนวนเงิน ${sats.toLocaleString()} Sats สำเร็จแล้ว`, 'success');
             }
 
-            // Smooth scroll to result
             resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        // Helper to render QR code using QRCode.js
         function renderQRCode(container, text) {
             container.innerHTML = '';
             qrcodeInstance = new QRCode(container, {
@@ -436,58 +637,30 @@
             });
         }
 
-        // EMVCo PromptPay Generator Specification Implementation
         function generatePromptPayPayload(target, amount) {
-            // Target formatting (e-Wallet is 15 digits)
             let formattedTarget = target.replace(/[^0-9]/g, '');
-            
-            // Format 00 (Payload Format Indicator) = '01'
-            // Format 01 (Point of Initiation Method) = '12' (Dynamic if amount specified, else '11')
             const pfi = '000201';
             const poi = amount ? '010212' : '010211';
 
-            // Merchant Account Information - PromptPay (Tag 29)
-            // AID: A000000677010111
-            // e-Wallet: 0315 + target(15 digits)
-            let targetTag = '';
-            if (formattedTarget.length === 15) {
-                targetTag = '0315' + formattedTarget;
-            } else if (formattedTarget.length === 13) {
-                // Citizen ID
-                targetTag = '0213' + formattedTarget;
-            } else if (formattedTarget.length === 10) {
-                // Mobile Number
-                targetTag = '01130066' + formattedTarget.substring(1);
-            } else {
-                targetTag = '0315' + formattedTarget.padStart(15, '0');
-            }
-
+            let targetTag = '0315' + formattedTarget.padStart(15, '0');
             const merchantTag = '0016A000000677010111' + targetTag;
             const merchantInfo = '29' + String(merchantTag.length).padStart(2, '0') + merchantTag;
 
-            // Transaction Currency: 764 (THB)
             const currency = '5303764';
 
-            // Transaction Amount (Tag 54)
             let amountStr = '';
             if (amount) {
                 const formattedAmount = amount.toFixed(2);
                 amountStr = '54' + String(formattedAmount.length).padStart(2, '0') + formattedAmount;
             }
 
-            // Country Code: TH (Tag 58)
             const country = '5802TH';
-
-            // Assemble raw string prior to CRC
             const rawString = pfi + poi + merchantInfo + currency + amountStr + country + '6304';
-
-            // Compute CRC16 (CCITT-FALSE)
             const crc = computeCRC16(rawString);
 
             return rawString + crc;
         }
 
-        // CRC16 CCITT-FALSE Implementation for PromptPay
         function computeCRC16(data) {
             let crc = 0xFFFF;
             for (let i = 0; i < data.length; i++) {
@@ -498,7 +671,6 @@
             return crc.toString(16).toUpperCase().padStart(4, '0');
         }
 
-        // Copy Payload Function
         function copyPayload() {
             if (!currentPayload) return;
 
@@ -519,7 +691,6 @@
             document.body.removeChild(textarea);
         }
 
-        // Toast Notification Helper
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-msg');
@@ -541,7 +712,6 @@
             }, 3000);
         }
 
-        // Send height to parent window for responsive auto-height iframe
         function sendHeightToParent() {
             const height = document.body.scrollHeight;
             window.parent.postMessage({ type: 'SET_IFRAME_HEIGHT', height: height }, '*');
@@ -550,7 +720,6 @@
         window.addEventListener('load', sendHeightToParent);
         window.addEventListener('resize', sendHeightToParent);
 
-        // Send height when DOM changes (e.g. QR code appears)
         const observer = new ResizeObserver(() => sendHeightToParent());
         observer.observe(document.body);
     </script>
